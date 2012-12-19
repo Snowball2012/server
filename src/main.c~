@@ -63,7 +63,7 @@ int ExecuteCommand(const char * cmd, struct ClientNode * client)
 		SendMessage("Counter = ", client, 0);
 		SendMessage(c_str, client, 1);
 	} else 
-		SendMessage("unknown command, try \"+\", \"-\" or \"print\"", client, 1);
+		SendMessage("unknown command", client, 1);
 
 		
 	printf("%s\n", cmd);
