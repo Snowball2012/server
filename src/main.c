@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -20,6 +20,11 @@ struct ClientNode {
 
 /*ACHTUNG!!!!!!!!!! GLOBAL VARIABLE!!!!!*/
 int counter = 0;
+
+void itoa(int n, char * buff)
+{
+	sprintf(buff, "%i", n);
+}
 
 /* Creates a new listening socket */
 int CreateSocket(int port)
@@ -78,24 +83,29 @@ struct ClientNode * DeleteClient(struct ClientNode * cl,
 
 int ProcessClient(struct ClientNode * cl)
 {
-	char buff;
+	char buff[256];
+	char counter_str[256];
 	const char * message = "wrong command, try +, - or d\n";
-	if(!read(cl->fd, &buff, sizeof(char))) {
+	if(read(cl->fd, &buff, sizeof(buff))<=0) {
 		shutdown(cl->fd, 2);
 		close(cl->fd);
 		return 1;
 	}
-	switch(buff) {
+	printf("\n%s\n", buff);
+	switch(*buff) {
 		case 'd': 
-			write(cl->fd, &counter, sizeof(int));
+			itoa(counter, counter_str);
+			write(cl->fd, counter_str, strlen(counter_str));
 			break;
 		case '+':
 			counter++;
-			write(cl->fd, &counter, sizeof(int));
+			itoa(counter, counter_str);
+			write(cl->fd, counter_str, strlen(counter_str));
 			break;
 		case '-':
 			counter--;
-			write(cl->fd, &counter, sizeof(int));
+			itoa(counter, counter_str);
+			write(cl->fd, counter_str, strlen(counter_str));
 			break;
 		default:
 			/*write(cl->fd, message, strlen(message));*/
