@@ -22,26 +22,34 @@ char ** ParseCmd(const char * cmd, int * argc)
 			}
 		} else {
 			if (i>0) {
+				char ** newargv = (char **)malloc(sizeof(char *)*(*argc+2));
 				word = (char *) malloc(sizeof(char)*(i+1));
 				for(j = 0; j<i; j++)
 					word[j] = buf[j];
 				word[i] = '\0';	
 				argv[*argc] = word;
 				(*argc)++;
-				argv = realloc(argv, *argc+1);
+				for(j = 0; j<*argc; j++)
+					newargv[j] = argv[j];
+				free(argv);
+				argv = newargv;
 				i = 0;
 			}
 		}
 		cmd++;
 	}
 	if (i>0) {
+		char ** newargv = (char **)malloc(sizeof(char *)*(*argc+2));
 		word = (char *) malloc(sizeof(char)*(i+1));
 		for(j = 0; j<i; j++)
 			word[j] = buf[j];
 		word[i] = '\0';	
 		argv[*argc] = word;
 		(*argc)++;
-		argv = realloc(argv, *argc+1);
+		for(j = 0; j<*argc; j++)
+			newargv[j] = argv[j];
+		free(argv);
+		argv = newargv;
 		i = 0;
 	}
 	argv[*argc] = NULL;
@@ -116,7 +124,15 @@ void Name(int argc, char ** argv, struct ClientNode * cl)
 }
 
 
-void Market(int argc, char ** argv, struct ClientNode * cl){}
+void Market(int argc, char ** argv, struct ClientNode * cl)
+{
+	if(argc!=1) {
+		SendMessage("Incorrect usage", cl, 1);
+		return;
+	}
+	SendMessage("Market state:", cl, 1);
+	
+}
 void Player(int argc, char ** argv, struct ClientNode * cl){}
 void Prod(int argc, char ** argv, struct ClientNode * cl){}
 void Turn(int argc, char ** argv, struct ClientNode * cl){}

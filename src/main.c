@@ -56,6 +56,10 @@ int ExecuteCommand(const char * cmd, struct ClientNode * client)
 	int argc,i;
 
 	char ** argv = ParseCmd(cmd, &argc);
+	if(argv[0] == NULL) {
+		free(argv);
+		return 0;
+	}
 	if(!strcmp(argv[0],"/help"))
 		SHelp(client);
 	else if(!strcmp(argv[0], "/start"))
